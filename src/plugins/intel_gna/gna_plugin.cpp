@@ -343,7 +343,7 @@ std::string GNAPluginNS::GNAPlugin::GetCompileTarget() const {
     } else if (!config.gnaCompileTarget.empty()) {
         return config.gnaCompileTarget;
     }
-    return common::kGnaTarget3_0;
+    return common::kGnaTarget3_5;
 }
 
 GNAPlugin::GNAPlugin(const std::map<std::string, std::string>& configMap) {
@@ -934,6 +934,8 @@ void GNAPlugin::LoadNetwork(const CNNNetwork& _network) {
     if (!graphCompiler.memory_connection.empty() && gnaFlags->num_requests != 1) {
         gnaFlags->num_requests = 1;
     }
+
+    graphCompiler.SetValidatorTarget(GetCompileTarget());
 
     graphCompiler.SetValidatorTarget(GetCompileTarget());
 

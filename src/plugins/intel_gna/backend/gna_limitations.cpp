@@ -20,6 +20,11 @@ namespace GNAPluginNS {
 namespace GNALimitations {
 namespace Cnn2D {
 
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args) {
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
+
 bool RangeLimit::isValid(const uint32_t val) const {
     return val >= min && val <= max;
 }
@@ -227,7 +232,7 @@ std::unique_ptr<AbstractValidator> AbstractValidator::Create(const std::string& 
     } else if (target == common::kGnaTarget3_5) {
         return tools::make_unique<Validator_35>();
     }
-    return nullptr;
+    return tools::make_unique<Validator_35>();
 }
 
 void AbstractValidator::ThrowIfNotEmpty(const std::string& prefix, const std::string& error) {
