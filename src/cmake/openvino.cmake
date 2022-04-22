@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TARGET_NAME openvino)
+set(TARGET_NAME openvino_preproc)
 
 add_library(${TARGET_NAME} $<TARGET_OBJECTS:ngraph_obj>
                            $<TARGET_OBJECTS:frontend_common_obj>
