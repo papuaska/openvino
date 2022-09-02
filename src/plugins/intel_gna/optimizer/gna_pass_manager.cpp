@@ -1913,6 +1913,20 @@ void FuseFQIntoWeightsPass::run() {
         return LayerInfo(ptr).isNonFunctional();
     };
 
+    auto assignBlob = [](CNNLayerPtr layer, Blob::Ptr blob, bool weights) {
+        auto weigtableLayer = std::dynamic_pointer_cast<WeightableLayer>(layer);
+        if (nullptr == weigtableLayer) {
+            THROW_GNA_LAYER_EXCEPTION(layer) << " not a weightable layer";
+        }
+        if (weights) {
+            weigtableLayer->_weights = blob;
+            weigtableLayer->blobs["weights"] = blob;
+        } else {
+            weigtableLayer->_biases = blob;
+            weigtableLayer->blobs["biases"] = blob;
+        }
+    };
+
     auto assignWeightsAndBiases = [](CNNLayerPtr layer, Blob::Ptr weights, Blob::Ptr biases) {
         auto weigtableLayer = std::dynamic_pointer_cast<WeightableLayer>(layer);
         if (nullptr == weigtableLayer) {
@@ -2062,6 +2076,38 @@ void FuseFQIntoWeightsPass::run() {
 
             // 3. assign dequantized const blob to weightable layer
             assignWeightsAndBiases(weightableLayer, dequantizedWeights, biases);
+        }
+    }
+
+    // Need to update FC from LSTM after POT
+    // to have _weights/_biases populated with blobs instead of inputs with Const
+    for (auto& l : *pLayers) {
+        if (!LayerInfo(l).isFullyConnected()) {
+            continue;
+        }
+        const auto input_to_fc_number = l->insData.size();
+        auto new_input_to_fc_number = input_to_fc_number;
+
+        if (input_to_fc_number == 3) {
+            auto input_data = l->insData[2].lock();
+            auto input_layer = getCreatorLayer(input_data).lock();
+            if (LayerInfo(input_layer).isConst()) {
+                auto bias_blob = input_layer->blobs.begin()->second;
+                assignBlob(l, bias_blob, false);
+                new_input_to_fc_number--;
+            }
+        }
+        if (new_input_to_fc_number == 2) {
+            auto input_data = l->insData[1].lock();
+            auto input_layer = getCreatorLayer(input_data).lock();
+            if (LayerInfo(input_layer).isConst()) {
+                auto weight_blob = input_layer->blobs.begin()->second;
+                assignBlob(l, weight_blob, true);
+                new_input_to_fc_number--;
+            }
+        }
+        if (new_input_to_fc_number < input_to_fc_number) {
+            l->insData.resize(new_input_to_fc_number);
         }
     }
 }
