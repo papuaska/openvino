@@ -40,7 +40,7 @@ macro(ov_parse_ci_build_number)
         # only build number is defined by CI
         set(the_whole_version_is_defined_by_ci OFF)
     elseif(CI_BUILD_NUMBER)
-        message(FATAL_ERROR "Failed to parse CI_BUILD_NUMBER which is ${CI_BUILD_NUMBER}")
+        # message(FATAL_ERROR "Failed to parse CI_BUILD_NUMBER which is ${CI_BUILD_NUMBER}")
     endif()
 
     if(NOT DEFINED repo_root)
