@@ -87,6 +87,7 @@
 #include "transformations/broadcast_const.hpp"
 #include "transformations/op_conversions/convert_mvn1_to_mvn6.hpp"
 #include "transformations/decompose_mvn.hpp"
+#include "transformations/decompose_transpose_before_convolution.hpp"
 #include "transformations/substitute_softsign.hpp"
 #include "transformations/convert_precision.hpp"
 #include "transformations/unfuse_reshape_and_transpose.hpp"
@@ -719,6 +720,9 @@ void GNAPlugin::LoadNetwork(const CNNNetwork& _network) {
         manager.register_pass<ov::intel_gna::pass::ReorderActivationAndPooling>();
         manager.register_pass<ov::intel_gna::pass::RemoveSingleInputConcat>();
         manager.register_pass<ov::intel_gna::pass::SubstituteSoftsign>();
+        manager.register_pass<ov::intel_gna::pass::DecomposeTranspose>();
+        manager.register_pass<ov::intel_gna::pass::DecomposeTranspose2>();
+        manager.register_pass<ov::intel_gna::pass::DecomposeTranspose2FQ>();
         manager.register_pass<ngraph::pass::ConvertOpSet3ToOpSet2>();
         manager.register_pass<ngraph::pass::ConvertOpSet2ToOpSet1>();
         manager.register_pass<ngraph::pass::ConvertOpSet1ToLegacy>();
@@ -792,7 +796,7 @@ void GNAPlugin::LoadNetwork(const CNNNetwork& _network) {
         UpdateInputScaleFromNetwork(network);
     }
 
-    if (MustBeConvertedFromNCHWToNHWC(CNNNetSortTopologically(network))) {
+    if (gnaFlags->convert_from_nchw_to_nhwc && MustBeConvertedFromNCHWToNHWC(CNNNetSortTopologically(network))) {
         FillInputsAndOutputsTranspositionInfo(network);
     }
 
@@ -816,8 +820,9 @@ void GNAPlugin::LoadNetwork(const CNNNetwork& _network) {
         // fake quantisation aware passes
         passes->registerPass<FuseFQIntoWeightsPass>();
         passes->registerPass<MoveFakeQuantizeLayerIntoQuantParamsPass>();
-
-        passes->registerPass<TransposeWeightsFromNCHWToNHWCPass>();
+        if (gnaFlags->convert_from_nchw_to_nhwc) {
+            passes->registerPass<TransposeWeightsFromNCHWToNHWCPass>();
+        }
 
         passes->registerPass<SubstitutePReluPass>();
 

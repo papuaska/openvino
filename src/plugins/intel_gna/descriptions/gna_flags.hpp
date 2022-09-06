@@ -21,5 +21,6 @@ struct GNAFlags {
     bool performance_counting = false;
     bool input_low_precision = false;
     ov::log::Level log_level = ov::log::Level::NO;
+    bool convert_from_nchw_to_nhwc = false;
 };
 }  // namespace GNAPluginNS
