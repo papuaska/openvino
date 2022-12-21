@@ -105,10 +105,11 @@ if(THREADING STREQUAL "TBB" OR THREADING STREQUAL "TBB_AUTO")
     if(WIN32 AND X86_64)
         # TODO: add target_path to be platform specific as well, to avoid following if
         RESOLVE_DEPENDENCY(TBB
-                ARCHIVE_WIN "tbb2020_20200415_win.zip"
+                ARCHIVE_WIN "tbb2020_617e9a71_win.zip"
                 TARGET_PATH "${TEMP}/tbb"
                 ENVIRONMENT "TBBROOT"
-                SHA256 "f1c9b9e2861efdaa01552bd25312ccbc5feeb45551e5f91ae61e29221c5c1479")
+                SHA256 "01cac3cc48705bd52b83a6e1fa1ed95c708928be76160f5b9c5c37f954d56df4"
+                USE_NEW_LOCATION TRUE)
         if(ENABLE_TBBBIND_2_5)
             RESOLVE_DEPENDENCY(TBBBIND_2_5
                     ARCHIVE_WIN "tbbbind_2_5_static_win_v1.zip"
