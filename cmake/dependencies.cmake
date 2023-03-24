@@ -88,12 +88,14 @@ function(ov_download_tbb)
 
     if(WIN32 AND X86_64)
         # TODO: add target_path to be platform specific as well, to avoid following if
+		set(IE_PATH_TO_DEPS "https://github.com/oneapi-src/oneTBB/releases/download/v2021.8.0")
         RESOLVE_DEPENDENCY(TBB
-                ARCHIVE_WIN "tbb2020_617e9a71_win.zip"
-                TARGET_PATH "${TEMP}/tbb"
+                ARCHIVE_WIN "oneapi-tbb-2021.8.0-win.zip"
+                TARGET_PATH "${TEMP}/oneapi-tbb-2021.8.0"
                 ENVIRONMENT "TBBROOT"
-                SHA256 "01cac3cc48705bd52b83a6e1fa1ed95c708928be76160f5b9c5c37f954d56df4"
+                SHA256 "b9265d4dc5b74e27176c6a6b696882935f605191d014a62c010c9610904e7f65"
                 USE_NEW_LOCATION TRUE)
+		unset(IE_PATH_TO_DEPS)
     elseif(ANDROID AND X86_64)  # Should be before LINUX due LINUX is detected as well
         RESOLVE_DEPENDENCY(TBB
                 ARCHIVE_ANDROID "tbb2020_20200404_android.tgz"
