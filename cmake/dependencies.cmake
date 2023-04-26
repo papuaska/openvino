@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Intel Corporation
+# Copyright (C) 2018-2023 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -89,10 +89,11 @@ function(ov_download_tbb)
     if(WIN32 AND X86_64)
         # TODO: add target_path to be platform specific as well, to avoid following if
         RESOLVE_DEPENDENCY(TBB
-                ARCHIVE_WIN "tbb2020_20200415_win.zip"
+                ARCHIVE_WIN "tbb2020_617e9a71_win.zip"
                 TARGET_PATH "${TEMP}/tbb"
                 ENVIRONMENT "TBBROOT"
-                SHA256 "f1c9b9e2861efdaa01552bd25312ccbc5feeb45551e5f91ae61e29221c5c1479")
+                SHA256 "01cac3cc48705bd52b83a6e1fa1ed95c708928be76160f5b9c5c37f954d56df4"
+                USE_NEW_LOCATION TRUE)
     elseif(ANDROID AND X86_64)  # Should be before LINUX due LINUX is detected as well
         RESOLVE_DEPENDENCY(TBB
                 ARCHIVE_ANDROID "tbb2020_20200404_android.tgz"
@@ -295,9 +296,8 @@ if(ENABLE_INTEL_GNA)
             GNA_LIB_DIR
             libGNA_INCLUDE_DIRS
             libGNA_LIBRARIES_BASE_PATH)
-
-    set(GNA_VERSION "03.05.00.1472.1")
-    set(GNA_HASH "2175cf3c39d3f8e5eb09bb6602d64b2c944ee8249bb927567d019353cb7165f0")
+    set(GNA_VERSION "03.05.00.1906")
+    set(GNA_HASH "4a5be86d9c026b0e10afac2a57fc7c99d762b30e3d506abb3a3380fbcfe2726e")
 
     if (WIN32)
         set(GNA_PLATFORM_DIR win64 CACHE STRING "" FORCE)
@@ -316,7 +316,8 @@ if(ENABLE_INTEL_GNA)
             TARGET_PATH "${TEMP}/gna_${GNA_VERSION}"
             VERSION_REGEX ".*_([0-9]+.[0-9]+.[0-9]+.[0-9]+).*"
             FILES_TO_EXTRACT FILES_TO_EXTRACT_LIST
-            SHA256 ${GNA_HASH})
+            SHA256 ${GNA_HASH}
+            USE_NEW_LOCATION TRUE)
     unset(IE_PATH_TO_DEPS)
     update_deps_cache(GNA_EXT_DIR "${GNA_EXT_DIR}" "Path to GNA root folder")
     debug_message(STATUS "gna=" ${GNA_EXT_DIR})
