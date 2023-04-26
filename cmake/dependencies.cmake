@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Intel Corporation
+# Copyright (C) 2018-2023 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -296,9 +296,9 @@ if(ENABLE_INTEL_GNA)
             GNA_LIB_DIR
             libGNA_INCLUDE_DIRS
             libGNA_LIBRARIES_BASE_PATH)
+        set(GNA_VERSION "03.05.00.1906")
+        set(GNA_HASH "4a5be86d9c026b0e10afac2a57fc7c99d762b30e3d506abb3a3380fbcfe2726e")
 
-    set(GNA_VERSION "03.05.00.1472.1")
-    set(GNA_HASH "2175cf3c39d3f8e5eb09bb6602d64b2c944ee8249bb927567d019353cb7165f0")
 
     if (WIN32)
         set(GNA_PLATFORM_DIR win64 CACHE STRING "" FORCE)
