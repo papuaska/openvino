@@ -28,6 +28,11 @@ add_library(${TARGET_NAME}
     $<$<TARGET_EXISTS:openvino_proxy_plugin_obj>:$<TARGET_OBJECTS:openvino_proxy_plugin_obj>>)
 
 add_library(openvino::runtime ALIAS ${TARGET_NAME})
+
+if(WIN32)
+    set_target_properties(${TARGET_NAME} PROPERTIES OUTPUT_NAME ${TARGET_NAME}_preproc)
+endif()
+
 set_target_properties(${TARGET_NAME} PROPERTIES EXPORT_NAME runtime)
 
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_17)
