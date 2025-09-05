@@ -23,6 +23,8 @@ macro(ov_install_pdb target)
                 message(FATAL_ERROR "OpenVINO PDB files should be installed only for SHARED or MODULE libraries, given target type is ${_lib_type}")
             endif()
 
+            target_link_options(${target} PRIVATE /PDBALTPATH:$<TARGET_PDB_FILE_NAME:${target}>)
+
             # installation of linker PDB files for shared libraries
             install(FILES $<TARGET_PDB_FILE:${target}>
                     DESTINATION ${OV_CPACK_RUNTIMEDIR} COMPONENT pdb
